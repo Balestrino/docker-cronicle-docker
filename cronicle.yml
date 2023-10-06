@@ -1,0 +1,51 @@
+version: "3.8"
+
+services:
+  cronicle:
+    image: bluet/cronicle-docker:latest
+    hostname: cronicle
+    environment:
+      # - TZ=Asia/Taipei
+      - CRONICLE_base_app_url=https://cronicle.eveonline.it/
+    ports:
+      - "3012:3012"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data/data:/opt/cronicle/data
+      - ./data/logs:/opt/cronicle/logs
+      - ./data/plugins:/opt/cronicle/plugins
+      - ./data/workloads/app:/app
+    networks:
+      - moleculer-internal
+      - traefik-public
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1024M
+        reservations:
+          cpus: "0.5"
+          memory: 128M
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik-public"
+        - "traefik.constraint-label=traefik-public"
+        # - "traefik.http.routers.cronicle.entrypoints=https"
+        # - "traefik.http.routers.cronicle.rule=Host(`cronicle.eveonline.it`)"
+        # - "traefik.http.routers.cronicle.tls=true"
+        - "traefik.http.routers.cronicle.service=cronicle"
+        - "traefik.http.services.cronicle.loadbalancer.server.port=3012"
+      # certificate resolver
+      # - "traefik.http.routers.cronicle.tls.certresolver=cloudflare"
+      # - "traefik.http.routers.cronicle.middlewares=high-ratelimit,security-headers,server-compress,cloudflarewarp"
+
+networks:
+  # Use the previously created public network "traefik-public", shared with other
+  # services that need to be publicly available via this Traefik
+  traefik-public:
+    external: true
+  moleculer-internal:
+    external: true
