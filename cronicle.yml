@@ -4,17 +4,17 @@ services:
   cronicle:
     image: bluet/cronicle-docker:latest
     hostname: cronicle
-    environment:
-      # - TZ=Asia/Taipei
-      - CRONICLE_base_app_url=https://cronicle.eveonline.it/
+    # environment:
+    # - TZ=UTC
+    # - CRONICLE_base_app_url=http://192.168.88.120
     ports:
       - "3012:3012"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./data/data:/opt/cronicle/data
-      - ./data/logs:/opt/cronicle/logs
-      - ./data/plugins:/opt/cronicle/plugins
-      - ./data/workloads/app:/app
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - ./data/data:/opt/cronicle/data:rw
+      - ./data/logs:/opt/cronicle/logs:rw
+      - ./data/plugins:/opt/cronicle/plugins:rw
+      - ./data/workloads/app:/app:rw
     networks:
       - moleculer-internal
       - traefik-public

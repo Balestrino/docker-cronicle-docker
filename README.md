@@ -1,7 +1,19 @@
+# DOCKER SWARM
+
+docker stack deploy -c cronicle.yml cronicle
+
+docker stack rm cronicle
+
+docker service logs --follow --tail=25 cronicle_cronicle
+
 # docker-cronicle-docker
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
+
 [![Docker Pulls](https://img.shields.io/docker/pulls/bluet/cronicle-docker.svg)](https://shields.io/)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fbluet%2Fdocker-cronicle-docker.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fbluet%2Fdocker-cronicle-docker?ref=badge_shield)
 
@@ -13,22 +25,25 @@ Run dockerized Cronicle cron jobs in docker container.
 
 # Supported tags
 
-* [Tags](https://hub.docker.com/r/bluet/cronicle-docker/tags) 
-* [Dockerfile](https://raw.githubusercontent.com/bluet/docker-cronicle-docker/master/docker/Dockerfile)
+- [Tags](https://hub.docker.com/r/bluet/cronicle-docker/tags)
+- [Dockerfile](https://raw.githubusercontent.com/bluet/docker-cronicle-docker/master/docker/Dockerfile)
 
 # Usage
 
 ## Install
+
 ```sh
 docker pull bluet/cronicle-docker:latest
 ```
 
 ## Running
+
 ```sh
 docker run -v /var/run/docker.sock:/var/run/docker.sock --hostname localhost -p 3012:3012 --name cronicle bluet/cronicle-docker:latest
 ```
 
 Alternatively with persistent data and logs:
+
 ```sh
 docker run \
         -v /var/run/docker.sock:/var/run/docker.sock:rw \
@@ -51,55 +66,61 @@ The web UI will be available at: http://localhost:3012
 
 ## Volumes
 
-| Path | Description |
-|--------|--------|
-| /opt/cronicle/data | Volume for data |
-| /opt/cronicle/logs | Volume for logs |
-| /opt/cronicle/plugins | Volume for plugins |
-| /app | Volume for additional files if needed by jobs |
+| Path                  | Description                                   |
+| --------------------- | --------------------------------------------- |
+| /opt/cronicle/data    | Volume for data                               |
+| /opt/cronicle/logs    | Volume for logs                               |
+| /opt/cronicle/plugins | Volume for plugins                            |
+| /app                  | Volume for additional files if needed by jobs |
 
 ## Configuration
 
 ### Environmental variables
-Cronicle supports a special environment variable syntax, which can specify command-line options as well as override any configuration settings.  The variable name syntax is `CRONICLE_key` where `key` is one of several command-line options (see table below) or a JSON configuration property path.
+
+Cronicle supports a special environment variable syntax, which can specify command-line options as well as override any configuration settings. The variable name syntax is `CRONICLE_key` where `key` is one of several command-line options (see table below) or a JSON configuration property path.
 
 For a list of latest default values, please check [Official documment](https://github.com/jhuckaby/Cronicle/blob/master/docs/Configuration.md).
 
-For overriding configuration properties by environment variable, you can specify any top-level JSON key from `config.json`, or a *path* to a nested property using double-underscore (`__`) as a path separator.  For boolean properties, you can specify `1` for true and `0` for false.  Here is an example of some of the possibilities available:
+For overriding configuration properties by environment variable, you can specify any top-level JSON key from `config.json`, or a _path_ to a nested property using double-underscore (`__`) as a path separator. For boolean properties, you can specify `1` for true and `0` for false. Here is an example of some of the possibilities available:
 
-| Environmental variable | Description | Default value |
-|--------|--------|--------|
-| CRONICLE_base_app_url | A fully-qualified URL to Cronicle on your server, including the port if non-standard. This is used for self-referencing URLs. | http://localhost:3012 |
-| CRONICLE_WebServer__http_port | The HTTP port for the web UI of your Cronicle server. (Keep default value, unless you know what you are doing) | 3012 |
-| CRONICLE_WebServer__https_port | The SSL port for the web UI of your Cronicle server. (Keep default value, unless you know what you are doing) | 443 |
-| CRONICLE_web_socket_use_hostnames | Setting this parameter to `1` will force Cronicle's Web UI to connect to the back-end servers using their hostnames rather than IP addresses. This includes both AJAX API calls and Websocket streams. | 0 |
-| CRONICLE_server_comm_use_hostnames | Setting this parameter to `1` will force the Cronicle servers to connect to each other using hostnames rather than LAN IP addresses. | 0 |
-| CRONICLE_web_direct_connect | When this property is set to `0`, the Cronicle Web UI will connect to whatever hostname/port is on the URL. It is expected that this hostname/port will always resolve to your master server. This is useful for single server setups, situations when your users do not have direct access to your Cronicle servers via their IPs or hostnames, or if you are running behind some kind of reverse proxy. If you set this parameter to `1`, then the Cronicle web application will connect directly to your individual Cronicle servers. This is more for multi-server configurations, especially when running behind a load balancer with multiple backup servers. The Web UI must always connect to the master server, so if you have multiple backup servers, it needs a direct connection. | 0 |
-| CRONICLE_socket_io_transports | This allows you to customize the socket.io transports used to connect to the server for real-time updates. If you are trying to run Cronicle in an environment where WebSockets are not allowed (perhaps an ancient firewall or proxy), you can change this array to contain the `polling` transport first. Otherwise set it to `["websocket"]` | ["websocket"] |
+| Environmental variable             | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Default value         |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| CRONICLE_base_app_url              | A fully-qualified URL to Cronicle on your server, including the port if non-standard. This is used for self-referencing URLs.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | http://localhost:3012 |
+| CRONICLE_WebServer\_\_http_port    | The HTTP port for the web UI of your Cronicle server. (Keep default value, unless you know what you are doing)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | 3012                  |
+| CRONICLE_WebServer\_\_https_port   | The SSL port for the web UI of your Cronicle server. (Keep default value, unless you know what you are doing)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | 443                   |
+| CRONICLE_web_socket_use_hostnames  | Setting this parameter to `1` will force Cronicle's Web UI to connect to the back-end servers using their hostnames rather than IP addresses. This includes both AJAX API calls and Websocket streams.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | 0                     |
+| CRONICLE_server_comm_use_hostnames | Setting this parameter to `1` will force the Cronicle servers to connect to each other using hostnames rather than LAN IP addresses.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | 0                     |
+| CRONICLE_web_direct_connect        | When this property is set to `0`, the Cronicle Web UI will connect to whatever hostname/port is on the URL. It is expected that this hostname/port will always resolve to your master server. This is useful for single server setups, situations when your users do not have direct access to your Cronicle servers via their IPs or hostnames, or if you are running behind some kind of reverse proxy. If you set this parameter to `1`, then the Cronicle web application will connect directly to your individual Cronicle servers. This is more for multi-server configurations, especially when running behind a load balancer with multiple backup servers. The Web UI must always connect to the master server, so if you have multiple backup servers, it needs a direct connection. | 0                     |
+| CRONICLE_socket_io_transports      | This allows you to customize the socket.io transports used to connect to the server for real-time updates. If you are trying to run Cronicle in an environment where WebSockets are not allowed (perhaps an ancient firewall or proxy), you can change this array to contain the `polling` transport first. Otherwise set it to `["websocket"]`                                                                                                                                                                                                                                                                                                                                                                                                                                                | ["websocket"]         |
 
 ### Custom configuration file
+
 A custom configuration file can be provide in the following location:
+
 ```sh
 /path-to-cronicle-storage/data/config.json.import
 ```
+
 The file will get loaded the very first time Cronicle is started. If afterwards
 a forced reload of the custom configuration is needed remove the following file
 and restart the Docker container:
+
 ```sh
 /path-to-cronicle-storage/data/.setup_done
 ```
 
 ## Web UI credentials
+
 The default credentials for the web interface are: `admin` / `admin`
 
-
-
 # Reference
+
 - Docker Hub: https://hub.docker.com/r/bluet/cronicle-docker
 - https://github.com/jhuckaby/Cronicle
 - https://github.com/belsander/docker-cronicle
 
 ## License
+
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fbluet%2Fdocker-cronicle-docker.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fbluet%2Fdocker-cronicle-docker?ref=badge_large)
 
 ## Contributors ✨
