@@ -1,3 +1,7 @@
+set Host file:
+
+192.168.88.120 cronicle
+
 # DOCKER SWARM
 
 docker stack deploy -c cronicle.yml cronicle
